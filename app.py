@@ -137,8 +137,7 @@ def build_two_layer_reader_network(
         "en_hubs": en_hubs,
         "ua_hubs": ua_hubs,
         "avg_clust_ua": avg_clust_ua,
-        "rho_cross": rho_cross,
-        "g_ua": g_ua
+        "rho_cross": rho_cross
     }
 
 
@@ -296,7 +295,7 @@ def run_single_simulation(
 
 @st.cache_data(show_spinner=False)
 def run_monte_carlo_experiment(
-    net_data: dict,
+    _net_data: dict,
     tau_lag: int,
     t_horizon: int,
     mu_theta_loc: float,
@@ -315,7 +314,7 @@ def run_monte_carlo_experiment(
     for r in range(n_runs):
         rng = np.random.default_rng(base_seed + r * 17)
         res = run_single_simulation(
-            net_data=net_data,
+            net_data=_net_data,
             tau_lag=tau_lag,
             t_horizon=t_horizon,
             mu_theta_loc=mu_theta_loc,
@@ -376,7 +375,7 @@ net = build_two_layer_reader_network(
 )
 
 mc_res = run_monte_carlo_experiment(
-    net_data=net,
+    _net_data=net,
     tau_lag=tau_input,
     t_horizon=t_horizon_input,
     mu_theta_loc=mu_theta_input,
@@ -453,7 +452,7 @@ with tab2:
     for name, s_tau, s_bi, s_mu, s_hub in scenarios_cfg:
         s_net = build_two_layer_reader_network(n_en=300, n_ua=500, alpha_bi=s_bi, p_triad=p_triad_input)
         s_res = run_monte_carlo_experiment(
-            net_data=s_net, tau_lag=s_tau, t_horizon=52, mu_theta_loc=s_mu,
+            _net_data=s_net, tau_lag=s_tau, t_horizon=52, mu_theta_loc=s_mu,
             delta_loc=delta_loc_input, lambda_weak=lambda_weak_input,
             lambda_strong=lambda_weak_input * 0.35, nu_decay=0.85,
             n_ua_seed_hubs=s_hub, n_runs=25
@@ -483,7 +482,7 @@ with tab3:
     sweep_rows = []
     for t_val in tau_grid:
         r_sw = run_monte_carlo_experiment(
-            net_data=net, tau_lag=t_val, t_horizon=52, mu_theta_loc=mu_theta_input,
+            _net_data=net, tau_lag=t_val, t_horizon=52, mu_theta_loc=mu_theta_input,
             delta_loc=delta_loc_input, lambda_weak=lambda_weak_input,
             lambda_strong=lambda_weak_input * 0.35, nu_decay=0.85,
             n_ua_seed_hubs=n_seed_hubs_input, n_runs=20
